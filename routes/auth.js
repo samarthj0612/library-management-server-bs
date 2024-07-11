@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
-const { auth, loginHandler, registerHandler } = require("../controllers/auth")
+const { authRoute, loginHandler, registerHandler } = require("../controllers/auth")
 
-app.get("/", auth)
+app.get("/", authRoute)
 
 app.post("/login", loginHandler);
 

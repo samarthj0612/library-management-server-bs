@@ -1,6 +1,6 @@
 const { auth, database } = require('../firebase/config');
 
-const auth = (req, res) => {
+const authRoute = (req, res) => {
   res.status(200).json({ message: "Auth route connected" })
 }
 
@@ -51,4 +51,4 @@ const registerHandler = async (req, res) => {
   }
 };
 
-module.exports = { auth, loginHandler, registerHandler };
+module.exports = { authRoute, loginHandler, registerHandler };
