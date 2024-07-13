@@ -1,9 +1,13 @@
 const express = require("express");
 const app = express();
-const { library, addLibrary } = require("../controllers/library")
+const {  addLibrary, deleteLibrary } = require("../controllers/library")
 
-app.get("/", library)
+// app.get("/", librarrry)
 
 app.post("/add", addLibrary);
+
+app.delete("/delete/:id", deleteLibrary);
+
+
 
 module.exports = app;
