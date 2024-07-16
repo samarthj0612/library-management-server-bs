@@ -2,6 +2,7 @@
 const { messaging, database } = require("firebase-admin");
 const { getDoc, doc } = require('firebase-admin/firestore');
 const { firestore } = require("../firebase/config");
+// const { VIRTUAL_SCROLL_STRATEGY } = require("@angular/cdk/scrolling");
 
 
 const root = (req, res) => {
@@ -25,8 +26,7 @@ const root = (req, res) => {
 
 const library = async (req, res) => {
   console.log(req.params.id);
-
-  try {
+    try {
     const libraryRef = firestore.collection('libraries').doc(req.params.id);
   const doc = await libraryRef.get();
   if (!doc.exists) {
@@ -35,10 +35,9 @@ const library = async (req, res) => {
     console.log('Document data:', doc.data());
   }
   } catch (error) {
-    console.log(error.message);
+    console.log(error.message);  
   }
-
-  res.send("Done")
+    res.send("Done");
 };
 
 
@@ -92,6 +91,16 @@ const studentDetailsPage = async (req, res) => {
   }
 };
 
+const renewalDateReminder = (req,res) => {
+  const data = req.body;
+  console.log(data);
+  try {
+    res.status(200).json({ message: "Successfully fetching renewal dates.", response: data });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get renewal date.", error: error.message });
+  }
+}
+
   
 
-module.exports = { root, library, userHomepage, branchDetails, studentDetailsPage }
+module.exports = { root, library, userHomepage, branchDetails, studentDetailsPage, renewalDateReminder }
