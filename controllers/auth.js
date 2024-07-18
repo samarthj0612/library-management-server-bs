@@ -51,4 +51,5 @@ const registerHandler = async (req, res) => {
   }
 };
 
+
 module.exports = { authRoute, loginHandler, registerHandler };

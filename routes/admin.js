@@ -6,7 +6,7 @@ app.get("/", admin);
 
 app.post("/notification", notification);
 
-app.get("/aminStudentRegistration", adminStudentRegistration);
+app.get("/adminStudentRegistration", adminStudentRegistration);
 
 app.post("/addNotice", addNotice);
 

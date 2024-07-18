@@ -6,59 +6,55 @@ const { firestore } = require("../firebase/config");
 
 
 const root = (req, res) => {
-  res.status(200).json({ message: "Server is successfully connected" })
-}
-
-// const library = (req,res) => {
-//   const data = req.params.id;
-//   console.log(data);
-
-//   try{
-//     // const result = logic
-
-//     res.status(200).json({ message: "This is Library", response: data });
-//   } catch (error) {
-//     res.status(500).json({ message: "Something went wrong", error: error });
-//   }
-//   }
-
-
+  res.status(200).json({ message: "Server is successfully connected" });
+};
 
 const library = async (req, res) => {
   console.log(req.params.id);
-    try {
+  try {
     const libraryRef = firestore.collection('libraries').doc(req.params.id);
-  const doc = await libraryRef.get();
-  if (!doc.exists) {
-    console.log('No such document!');
-  } else {
-    console.log('Document data:', doc.data());
-  }
+    const doc = await libraryRef.get();
+    if (!doc.exists) {
+      console.log('No such document!');
+      return res.status(404).json({ message: "Library not found" });
+    } else {
+      console.log('Document data:', doc.data());
+      return res.status(200).json({ message: "Library details retrieved successfully", libraryDetails: doc.data() });
+    }
   } catch (error) {
-    console.log(error.message);  
+    console.log(error.message);
+    return res.status(500).json({ message: "Something went wrong", error: error.message });
   }
-    res.send("Done");
 };
 
+const userHomepage = async (req, res) => {
+  const username = req.params.username;
+  console.log(username);
 
-const userHomepage = (req, res) => {
-  const data = req.params.id.username;
-  console.log(data);
+  try {
+    const userRef = firestore.collection('users').where('username', '==', username);
+    const snapshot = await userRef.get();
+    
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return res.status(404).json({ message: "User not found" });
+    } 
 
-  try{
-    res.status(200).json({message: "userHomepage is working", response: data});
-  
+    let userData;
+    snapshot.forEach(doc => {
+      userData = doc.data();
+    });
+
+    res.status(200).json({ message: "userHomepage is working", response: userData });
   } catch (error) {
-    res.status(500).json({ message: "Something went wrong", error: error });
+    res.status(500).json({ message: "Something went wrong", error: error.message });
   }
-}
-
+};
 
 const branchDetails = async (req, res) => {
   const branchId = req.params.branchId;
 
   try {
-    // Fetch branch details from Firestore
     const branchRef = firestore.collection('branches').doc(branchId);
     const branchDoc = await branchRef.get();
 
@@ -72,12 +68,10 @@ const branchDetails = async (req, res) => {
   }
 };
 
-
 const studentDetailsPage = async (req, res) => {
   const studentId = req.params.studentId;
 
   try {
-    // Fetch student details from Firestore
     const studentRef = firestore.collection('students').doc(studentId);
     const studentDoc = await studentRef.get();
 
@@ -91,16 +85,29 @@ const studentDetailsPage = async (req, res) => {
   }
 };
 
-const renewalDateReminder = (req,res) => {
-  const data = req.body;
-  console.log(data);
+const renewalDateReminder = async (req, res) => {
+  const userId = req.body.userId;
+  console.log(userId);
+
   try {
-    res.status(200).json({ message: "Successfully fetching renewal dates.", response: data });
+    const renewalRef = firestore.collection('renewals').where('userId', '==', userId);
+    const snapshot = await renewalRef.get();
+
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return res.status(404).json({ message: "No renewals found for this user" });
+    }
+
+    let renewalDates = [];
+    snapshot.forEach(doc => {
+      renewalDates.push(doc.data());
+    });
+
+    res.status(200).json({ message: "Successfully fetched renewal dates.", response: renewalDates });
   } catch (error) {
     res.status(500).json({ message: "Failed to get renewal date.", error: error.message });
   }
-}
+};
 
-  
 
-module.exports = { root, library, userHomepage, branchDetails, studentDetailsPage, renewalDateReminder }
+module.exports = { root, library, userHomepage, branchDetails, studentDetailsPage, renewalDateReminder };

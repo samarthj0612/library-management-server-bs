@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const {  addLibrary, deleteLibrary } = require("../controllers/library")
 
-// app.get("/", librarrry)
+// app.get("/", library)
 
 app.post("/add", addLibrary);
 
