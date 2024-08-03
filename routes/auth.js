@@ -7,6 +7,7 @@ app.get("/", authRoute)
 app.post("/login", loginHandler);
 
 app.post("/register", registerHandler);
+app.get("/register", registerHandler)
 
 
 module.exports = app;

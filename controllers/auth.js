@@ -1,4 +1,4 @@
-const { auth, database } = require('../firebase/config');
+const { auth, database, firestore } = require('../firebase/config');
 
 const authRoute = (req, res) => {
   res.status(200).json({ message: "Auth route connected" })
@@ -17,8 +17,9 @@ const loginHandler = async (req, res) => {
     console.log('Successfully logged in user:', userRecord.uid);
 
     // Fetch user data from the database
-    const userSnapshot = await database.ref(`users/${userRecord.uid}`).once('value');
-    const userData = userSnapshot.val();
+    // const userSnapshot = await database.ref(`users/${userRecord.uid}`).once('value');
+    const userDoc = await firestore.collection('users').doc(userRecord.uid).get();
+    const userData = userDoc.data();
 
     if (userData) {
       return res.status(200).json({ message: "Successfully logged in", data: userData });
@@ -38,11 +39,17 @@ const registerHandler = async (req, res) => {
     return res.status(400).json({ message: "Mandatory params missing" });
   }
 
+
   try {
     const userData = await auth.createUser(data);
     console.log('Successfully created new user:', userData.uid);
 
-    await database.ref(`users/${userData.uid}`).set(data);
+    const userDetails = { ...data, "UID":userData.uid };
+
+
+    // await database.ref(`users/${userData.uid}`).set(data);
+    await firestore.collection('users').doc(userData.uid).set(userDetails);
+
     console.log('User data saved successfully');
     return res.status(201).json({ message: "Successfully registered", data });
   } catch (error) {
